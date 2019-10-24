@@ -24,6 +24,7 @@ namespace fileweb.Models
 
     public class DocsViewModel
     {
+        public IEnumerable<string> Category1List { get; set; }
         public string Category1 { get; set; }
         public IEnumerable<DocsListViewModel> Category2List { get; set; }
     }

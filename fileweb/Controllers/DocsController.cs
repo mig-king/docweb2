@@ -23,24 +23,29 @@ namespace fileweb.Controllers
             this._docAccessor = docAccessor;
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> List()
+
+        [HttpGet("{category1?}")]
+        public async Task<IActionResult> Index(string category1)
         {
             var category1List = await this._docAccessor.GetAllCategory1().ConfigureAwait(false);
 
-            return View("List", category1List.ToArray());
-        }
+            if (!category1List.Any())
+                return StatusCode(500, "CONFIG ERROR");
 
+            if (string.IsNullOrEmpty(category1))
+            {
+                category1 = category1List.OrderBy(c => c).FirstOrDefault();
 
-        [HttpGet("{category1}")]
-        public async Task<IActionResult> Index(string category1)
-        {
+                return Redirect($"~/docs/{category1}");
+            }
+            else
+            {
+                var docs = await this._docAccessor.GetDocDtos(category1).ConfigureAwait(false);
 
-            var docs = await this._docAccessor.GetDocDtos(category1).ConfigureAwait(false);
+                var model = docs.Any() ? docs.GetDocsModel().GetDocsViewModel(category1List) : null;
 
-            var model = docs.GetDocsModel().GetDocsViewModel();
-
-            return View(model);
+                return View(model);
+            }
         }
 
     }

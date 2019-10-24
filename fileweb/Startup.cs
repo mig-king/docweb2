@@ -36,23 +36,6 @@ namespace fileweb
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDocAccessor docAccessor)
         {
-            var cat1Task = docAccessor.GetAllCategory1();
-
-            cat1Task.Wait();
-
-            var cat1 = cat1Task.Result;
-
-            if (cat1 != null)
-            {
-                var options = new RewriteOptions()
-                    .AddRewrite($"^$", $"docs/", skipRemainingRules: true);
-
-                foreach (var c in cat1)
-                    options = options.AddRewrite($"(?i)^{c}", $"docs/{c}", skipRemainingRules: true);
-
-                app.UseRewriter(options);
-            }
-
             app.UseStaticFiles();
             app.UseMvc();
         }

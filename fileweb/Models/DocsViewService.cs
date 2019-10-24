@@ -40,12 +40,14 @@ namespace fileweb.Models
             };
         }
 
-        public static DocsViewModel GetDocsViewModel(this DocsModel docsModel)
+        public static DocsViewModel GetDocsViewModel(this DocsModel docsModel, IEnumerable<string> category1List)
         {
             Ensure.That(docsModel, nameof(docsModel)).IsNotNull();
+            Ensure.That(category1List, nameof(category1List)).IsNotNull();
 
             return new DocsViewModel()
             {
+                Category1List = category1List,
                 Category1 = docsModel.CategoryName,
                 Category2List = docsModel.DocsSubCategories?.Select(d => d.GetDocsListViewModel()),
             };
