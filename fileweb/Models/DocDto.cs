@@ -11,7 +11,6 @@ namespace fileweb.Models
         public string Category1 { get; set; }
         public string Category2 { get; set; }
         public string Category3 { get; set; }
-        public string Category4 { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Url { get; set; }

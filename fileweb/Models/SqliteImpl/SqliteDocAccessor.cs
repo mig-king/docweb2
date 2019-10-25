@@ -71,7 +71,7 @@ namespace fileweb.Models.SqliteImpl
             {
                 await connection.OpenAsync();
 
-                var sql = @"SELECT Id, Category1, Category2, Category3, Category4, Title, Description, Url, NewWindow, Visible, Icon FROM files WHERE Category1 = IFNULL(@Category1, Category1)";
+                var sql = @"SELECT Id, Category1, Category2, Category3, Title, Description, Url, NewWindow, Visible, Icon FROM files WHERE Category1 = IFNULL(@Category1, Category1)";
 
                 using (var command = new SQLiteCommand(sql, connection))
                 {
@@ -88,13 +88,12 @@ namespace fileweb.Models.SqliteImpl
                                 Category1 = reader.GetString(1),
                                 Category2 = reader.GetString(2),
                                 Category3 = reader.GetString(3),
-                                Category4 = reader.IsDBNull(4) ? null : reader.GetString(4),
-                                Title = reader.GetString(5),
-                                Description = reader.IsDBNull(6) ? null : reader.GetString(6),
-                                Url = reader.IsDBNull(7) ? null : reader.GetString(7),
-                                NewWindow = reader.GetInt32(8) > 0,
-                                Visible = reader.GetInt32(9) > 0,
-                                Icon = reader.IsDBNull(10) ? null : reader.GetString(10)
+                                Title = reader.GetString(4),
+                                Description = reader.IsDBNull(5) ? null : reader.GetString(5),
+                                Url = reader.IsDBNull(6) ? null : reader.GetString(6),
+                                NewWindow = reader.GetInt32(7) > 0,
+                                Visible = reader.GetInt32(8) > 0,
+                                Icon = reader.IsDBNull(9) ? null : reader.GetString(9)
                             });
                         }
                     }

@@ -6,23 +6,7 @@ using EnsureThat;
 
 namespace fileweb.Models
 {
-    public class Sequence
-    {
-        private int _value = 0;
-
-        public int Value
-        {
-            get
-            {
-                return this._value;
-            }
-        }
-
-        public int Increment()
-        {
-            return ++this._value;
-        }
-    }
+    
 
     static class DocsViewService
     {
@@ -40,63 +24,51 @@ namespace fileweb.Models
             };
         }
 
-        public static DocsViewModel GetDocsViewModel(this DocsModel docsModel, IEnumerable<string> category1List)
+        public static DocsViewModel GetDocsViewModel(this DocsModel docsModel, IEnumerable<string> categoryList)
         {
             Ensure.That(docsModel, nameof(docsModel)).IsNotNull();
-            Ensure.That(category1List, nameof(category1List)).IsNotNull();
+            Ensure.That(categoryList, nameof(categoryList)).IsNotNull();
 
             return new DocsViewModel()
             {
-                Category1List = category1List,
-                Category1 = docsModel.CategoryName,
-                Category2List = docsModel.DocsSubCategories?.Select(d => d.GetDocsListViewModel()),
+                CategoryList = categoryList,
+                Category = docsModel.CategoryName,
+                Rows = docsModel.GetDocsListItems().GetDocsListRows().ToArray(),
+                SubCategoryList = docsModel.DocsSubCategories?.Select(d => d.GetDocsViewModel(docsModel.DocsSubCategories?.Select(xd => xd.CategoryName).ToArray())).ToArray()
             };
         }
 
-        public static DocsListViewModel GetDocsListViewModel(this DocsModel docsModel)
+        public static IEnumerable<DocsListRowModel> GetDocsListRows(this IEnumerable<DocsListItemViewModel> docs)
         {
-            Ensure.That(docsModel, nameof(docsModel)).IsNotNull();
+            Ensure.That(docs, nameof(docs)).IsNotNull();
 
-            var seqNo = new Sequence();
-
-            return new DocsListViewModel()
-            {
-                CategoryName = docsModel.CategoryName,
-                Items = docsModel.GetDocsListItems(seqNo)
-            };
+            return docs
+                .OrderBy(d => d.Title)
+                .Select((d, index) => new { Id = index, Data = d })
+                .GroupBy(d => d.Id / 4)
+                .Select(dx => new DocsListRowModel()
+                {
+                    SequenceNo = dx.Key + 1,
+                    Items = dx.Select(d => d.Data).ToArray()
+                })
+                .ToArray();
         }
 
-        public static IEnumerable<DocsListItemViewModel> GetDocsListItems(this DocsModel docsModel, Sequence seqNo, bool skipCategory = false)
+        public static IEnumerable<DocsListItemViewModel> GetDocsListItems(this DocsModel docsModel)
         {
             Ensure.That(docsModel, nameof(docsModel)).IsNotNull();
-            Ensure.That(seqNo, nameof(seqNo)).IsNotNull();
 
             var itemsList = new List<DocsListItemViewModel>();
-
-            if (!skipCategory)
-                itemsList.Add(new DocsListItemViewModel()
-                {
-                    Level = docsModel.Level,
-                    IsHeader = true,
-                    SeqenceNo = seqNo.Increment(),
-                    Title = docsModel.CategoryName
-                });
 
             if (docsModel.Docs != null)
                 itemsList.AddRange(docsModel.Docs.OrderBy(d => d.Title).Select(d => new DocsListItemViewModel()
                 {
-                    IsHeader = false,
                     Title = d.Title,
                     Description = d.Description,
                     Url = d.Url,
                     NewWindow = d.NewWindow,
-                    SeqenceNo = seqNo.Increment(),
                     Icon = d.Icon
                 }));
-
-            if (docsModel.DocsSubCategories != null)
-                foreach (var sub in docsModel.DocsSubCategories.OrderBy(d => d.CategoryName))
-                    itemsList.AddRange(sub.GetDocsListItems(seqNo));
 
             return itemsList;
         }
@@ -109,8 +81,7 @@ namespace fileweb.Models
                 {
                     (d=>d.Category1 ),
                     (d=>d.Category2 ),
-                    (d=>d.Category3 ),
-                    (d=>d.Category4 )
+                    (d=>d.Category3 )
                 })
                 .FirstOrDefault();
         }
