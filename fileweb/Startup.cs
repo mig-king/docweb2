@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Rewrite;
 using EnsureThat;
 using fileweb.Models;
-using fileweb.Models.SqliteImpl;
+using fileweb.Models.SqlServer;
 
 namespace fileweb
 {
@@ -30,7 +30,7 @@ namespace fileweb
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddSingleton<IDocAccessor>(new SqliteDocAccessor(Configuration.GetValue<string>("Cms_Db_ConnectionString")));
+            services.AddSingleton<IDocAccessor>(new SqlServerDocAccessor(Configuration.GetValue<string>("Cms_Db_ConnectionString")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
