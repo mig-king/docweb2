@@ -55,9 +55,9 @@
                                         <div class="col-md-6 col-lg-3">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <div class="mb-1">@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></div>
+                                                    <div class="mb-1"><a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'>@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></a></div>
                                                     <div class="text-muted mb-2"><small>@item.Description</small></div>
-                                                    <a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'><small><i class="fa fa-arrow-circle-right"></i>&nbsp;Click to View</small></a>
+                                           
                                                 </div>
                                             </div>
                                         </div>
@@ -84,9 +84,9 @@
                                                 <div class="col-md-6 col-lg-3">
                                                     <div class="card">
                                                         <div class="card-body">
-                                                            <div class="mb-1">@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></div>
+                                                            <div class="mb-1"> <a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'>@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></a></div>
                                                             <div class="text-muted mb-2"><small>@item.Description</small></div>
-                                                            <a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'><small><i class="fa fa-arrow-circle-right"></i>&nbsp;Click to View</small></a>
+                                                            
                                                         </div>
                                                     </div>
                                                 </div>
