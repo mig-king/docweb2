@@ -33,6 +33,12 @@ body {
   margin-left: 0;
 }
 
+.btn-light:hover {
+    background-color: #97298f !important;
+    border-color: #97298f !important;
+    background-image: none !important;
+    color:white;
+}
 @media (min-width: 768px) {
   #sidebar-wrapper {
     margin-left: 0;
