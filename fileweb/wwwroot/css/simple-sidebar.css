@@ -33,6 +33,12 @@ body {
   margin-left: 0;
 }
 
+.btn-light {
+    color: #212529;
+    background-color: #faecf9;
+    border-color: #faecf9;
+}
+
 .btn-light:hover {
     background-color: #97298f !important;
     border-color: #97298f !important;
