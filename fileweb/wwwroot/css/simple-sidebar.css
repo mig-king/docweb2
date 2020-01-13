@@ -45,17 +45,29 @@ body {
     background-image: none !important;
     color:white;
 }
-@media (min-width: 768px) {
-  #sidebar-wrapper {
-    margin-left: 0;
-  }
 
-  #page-content-wrapper {
-    min-width: 0;
-    width: 100%;
-  }
-
-  #wrapper.toggled #sidebar-wrapper {
-    margin-left: -15rem;
-  }
+.badge-secondary {
+    background-color: #97298f !important;
+    border-color: #97298f !important;
+    background-image: none !important;
+    color: white;
 }
+
+.navbar-brand.disabled {
+    pointer-events: none;
+}
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+            margin-left: 0;
+        }
+
+        #page-content-wrapper {
+            min-width: 0;
+            width: 100%;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -15rem;
+        }
+    }

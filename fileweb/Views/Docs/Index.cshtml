@@ -1,104 +1,70 @@
-﻿@model fileweb.Models.DocsViewModel
+﻿@model fileweb.Models.DocsHomeViewModel
 @{
-    ViewData["Title"] = "Home Page";
-    int itemCount = 0;
-    bool inLine = false;
+    ViewData["Title"] = "Connect Care Portal";
 }
 
-
 <!-- Sidebar -->
-<div class="bg-light border-right" id="sidebar-wrapper">
-    <div class="sidebar-heading"> <img class="img-fluid" width="200" src="~/images/HAH_LOGO.svg"></div>
-    <div class="list-group list-group-flush">
-        @if (Model != null && Model.CategoryList != null)
-        {
-            @foreach (var c1 in Model.CategoryList.OrderBy(c => c))
-            {
-                <a href="@c1" class="list-group-item list-group-item-action bg-light">@c1</a>
-            }
-        }
-
-    </div>
-</div>
-
+@if (Model != null)
+{
+    await Html.RenderPartialAsync("_Sidebar", Model.CategoryList).ConfigureAwait(false);
+}
 
 <!-- Page Content -->
 <div id="page-content-wrapper">
     @if (Model != null)
     {
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <a class="navbar-brand disabled" href="#">Connect Care Portal</a>
             <button class="btn btn-light btn-sm d-md-none" id="menu-toggle">
                 <i class="fa fa-bars" aria-hidden="true"
                    id="iconc"></i> menu
             </button>
-
-            <h5>@Model.Category</h5>
-
-
+            <span class="navbar-text ml-auto">
+                @this.Context.Items["User"]
+            </span>
         </nav>
         <div class="container-fluid">
+            @if (Model.Anncouncement != null)
+            {
+                <div class="card mt-3">
+                    <h5 class="card-header text-white bg-primary">Announcement</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.Anncouncement.Title</h5>
+                        <p class="card-text">@Model.Anncouncement.Content</p>
+                        <p class="card-text">Posted on: <small class="text-muted">@Model.Anncouncement.CreatedAt</small></p>
+                    </div>
+                </div>
+            }
             <div class="row mt-3 ml-3 mr-3">
-                @if (Model.SubCategoryList != null)
+                <p class="lead">
+                    What will I find in this portal?
+                </p>
+            </div>
+            <div class="accordion mt-1" id="accordionExample">
+                @foreach (var category in Model.CategoryList
+                  .GroupBy(c => c.Category1)
+                  .OrderBy(c => c.Key))
                 {
-                    @foreach (var cat2 in Model.SubCategoryList.OrderBy(c => c.Category))
-                    {
-                        <div class="col-12">
-                            <h3 class="mb-3">@cat2.Category</h3>
+                    <div class="card">
+                        <div class="card-header bg-white" id="according_@category.Key" data-toggle="collapse" data-target="#collapse_@category.Key" aria-expanded="true" aria-controls="collapse_@category.Key">
+                            <button class="btn btn-white btn-lg" type="button">
+                                @category.Key
+                            </button>
                         </div>
-                        @if (cat2.Rows != null)
-                        {
-                            @foreach (var row in cat2.Rows.OrderBy(i => i.SequenceNo))
-                            {
-                                <div class='col-12 row mt-2 mb-4'>
-                                    @foreach (var item in row.Items.OrderBy(i => i.Title))
+                        <div id="collapse_@category.Key" class="collapse" aria-labelledby="according_@category.Key" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <h2>
+                                    @foreach (var category2 in Model.CategoryList
+                                     .Where(c => c.Category1 == category.Key)
+                                     .GroupBy(c => c.Category2)
+                                     .OrderBy(c => c.Key))
                                     {
-                                        <div class="col-md-6 col-lg-3">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="mb-1"><a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'>@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></a></div>
-                                                    <div class="text-muted mb-2 ml-2"><small>@item.Description</small></div>
-                                           
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <a href="@Url.Content("~/docs/")@category2.Key" class="badge badge-secondary">@category2.Key</a>
                                     }
-                                </div>
-                            }
-                        }
-
-
-                        @if (cat2.SubCategoryList != null)
-                        {
-                            foreach (var cat3 in cat2.SubCategoryList)
-                            {
-                                <div class="col-12">
-                                    <h5 class="mt-4">@cat3.Category</h5>
-                                </div>
-                                @if (cat3.Rows != null)
-                                {
-                                    @foreach (var row in cat3.Rows.OrderBy(i => i.SequenceNo))
-                                    {
-                                        <div class='col-12 row mt-2 mb-4'>
-                                            @foreach (var item in row.Items.OrderBy(i => i.Title))
-                                            {
-                                                <div class="col-md-6 col-lg-3">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="mb-1"> <a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'>@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></a></div>
-                                                            <div class="text-muted mb-2"><small>@item.Description</small></div>
-                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                    }
-                                }
-
-                            }
-                        }
-
-                    }
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
                 }
             </div>
         </div>

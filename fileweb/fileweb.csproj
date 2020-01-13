@@ -8,11 +8,13 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Ensure.That" Version="8.1.1" />
+    <PackageReference Include="Dapper" Version="2.0.30" />
+    <PackageReference Include="Ensure.That" Version="8.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.111" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
   </ItemGroup>
 
 
@@ -20,6 +22,18 @@
     <None Update="Data\cms.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Reference Include="LoginAPI">
+      <HintPath>V:\Libs\HAH\LoginAPI\4.0 Release\LoginAPI.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

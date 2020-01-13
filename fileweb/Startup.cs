@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using fileweb.Middlewares;
+using fileweb.Models;
+using fileweb.Models.SqlServer;
+using fileweb.Repositories;
+using fileweb.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Rewrite;
-using EnsureThat;
-using fileweb.Models;
-using fileweb.Models.SqlServer;
+using Microsoft.Extensions.Options;
+using System;
 
 namespace fileweb
 {
@@ -30,13 +27,25 @@ namespace fileweb
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.Configure<EnvOptions>(Configuration.GetSection("EnvOptions"));
+
             services.AddSingleton<IDocAccessor>(new SqlServerDocAccessor(Configuration.GetValue<string>("Cms_Db_ConnectionString")));
+            services.AddSingleton<IAnnouncementRepository>(new AnnouncementRepository(Configuration.GetValue<string>("Cms_Db_ConnectionString")));
+
+            services.AddScoped<IAnnouncementService, AnnouncementService>();
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = Configuration["EnvOptions:PortalUserSessionOptions:PortalUserSessionCookieName"];
+                options.IdleTimeout = TimeSpan.FromMinutes(Convert.ToDouble(Configuration["EnvOptions:PortalUserSessionOptions:SessionExpiredMinutes"]));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDocAccessor docAccessor)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDocAccessor docAccessor, IOptionsSnapshot<EnvOptions> optionsAccessor)
         {
             app.UseStaticFiles();
+            app.UseSession();
+            //app.UsePortalUserMiddleware(optionsAccessor.Value.PortalUrl, optionsAccessor.Value);
             app.UseMvc();
         }
     }
