@@ -1,0 +1,91 @@
+﻿@model fileweb.Models.DocsViewModel
+@{
+    ViewData["Title"] = "Connect Care Portal";
+}
+
+<!-- Sidebar -->
+@if (Model != null)
+{
+    await Html.RenderPartialAsync("_Sidebar", Model.CategoryList).ConfigureAwait(false);
+}
+
+<!-- Page Content -->
+<div id="page-content-wrapper">
+    @if (Model != null)
+    {
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-light btn-sm d-md-none" id="menu-toggle">
+                <i class="fa fa-bars" aria-hidden="true"
+                   id="iconc"></i> menu
+            </button>
+            <h5>@Model.Category</h5>
+        </nav>
+        <div class="container-fluid">
+            <div class="row mt-3 ml-3 mr-3">
+                @if (Model.SubCategoryList != null)
+                {
+                    @foreach (var cat2 in Model.SubCategoryList.OrderBy(c => c.Category))
+                    {
+                        <div class="col-12">
+                            <h3 class="mb-3">@cat2.Category</h3>
+                        </div>
+                        @if (cat2.Rows != null)
+                        {
+                            @foreach (var row in cat2.Rows.OrderBy(i => i.SequenceNo))
+                            {
+                                <div class='col-12 row mt-2 mb-4'>
+                                    @foreach (var item in row.Items.OrderBy(i => i.Title))
+                                    {
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="card text-center">
+                                                <div class="card-body">
+                                                    <div class="mb-1">
+                                                        <a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'>@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></a>
+                                                    </div>
+                                                    <div class="text-muted mb-2 ml-2"><small>@item.Description</small></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                        @if (cat2.SubCategoryList != null)
+                        {
+                            foreach (var cat3 in cat2.SubCategoryList)
+                            {
+                                <div class="col-12">
+                                    <h5 class="mt-4">@cat3.Category</h5>
+                                </div>
+                                @if (cat3.Rows != null)
+                                {
+                                    @foreach (var row in cat3.Rows.OrderBy(i => i.SequenceNo))
+                                    {
+                                        <div class="col-12 row mt-2 mb-4">
+                                            @foreach (var item in row.Items.OrderBy(i => i.Title))
+                                            {
+                                                <div class="col-md-6 col-lg-3">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <div class="mb-1">
+                                                                <a href="@item.Url" class="btn btn-light" target='@(item.NewWindow ? "_blank" : "_self")'>@item.Title &nbsp;<i class="fa @item.Icon" aria-hidden="true"></i></a>
+                                                            </div>
+                                                            <div class="text-muted mb-2"><small>@item.Description</small></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>
+<!-- /#page-content-wrapper -->

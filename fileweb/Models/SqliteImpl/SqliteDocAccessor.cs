@@ -22,12 +22,17 @@ namespace fileweb.Models.SqliteImpl
             this._connectionString = connectionString;
         }
 
+        public Task<IEnumerable<DocsCategoryModel>> GetAllCategories(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<string>> GetAllCategory1(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<string>> GetAllCategory2(CancellationToken cancellationToken = default)
         {
             var result = new List<string>();
 

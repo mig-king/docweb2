@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,7 +6,8 @@ namespace fileweb.Models
 {
     public interface IDocAccessor
     {
-        Task<IEnumerable<DocDto>> GetDocDtos(string category1, CancellationToken cancellationToken=default);
-        Task<IEnumerable<string>> GetAllCategory1(CancellationToken cancellationToken = default);
+        Task<IEnumerable<DocDto>> GetDocDtos(string category2, CancellationToken cancellationToken = default);
+        Task<IEnumerable<string>> GetAllCategory2(CancellationToken cancellationToken = default);
+        Task<IEnumerable<DocsCategoryModel>> GetAllCategories(CancellationToken cancellationToken = default);
     }
 }

@@ -1,12 +1,11 @@
-﻿using System;
+﻿using EnsureThat;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using EnsureThat;
 
 namespace fileweb.Models
 {
-    
+
 
     static class DocsViewService
     {
@@ -24,7 +23,7 @@ namespace fileweb.Models
             };
         }
 
-        public static DocsViewModel GetDocsViewModel(this DocsModel docsModel, IEnumerable<string> categoryList)
+        public static DocsViewModel GetDocsViewModel(this DocsModel docsModel, IEnumerable<DocsCategoryModel> categoryList)
         {
             Ensure.That(docsModel, nameof(docsModel)).IsNotNull();
             Ensure.That(categoryList, nameof(categoryList)).IsNotNull();
@@ -34,7 +33,8 @@ namespace fileweb.Models
                 CategoryList = categoryList,
                 Category = docsModel.CategoryName,
                 Rows = docsModel.GetDocsListItems().GetDocsListRows().ToArray(),
-                SubCategoryList = docsModel.DocsSubCategories?.Select(d => d.GetDocsViewModel(docsModel.DocsSubCategories?.Select(xd => xd.CategoryName).ToArray())).ToArray()
+                SubCategoryList = docsModel.DocsSubCategories?
+                .Select(d => d.GetDocsViewModel(docsModel.DocsSubCategories?.Select(xd => new DocsCategoryModel { Category3 = xd.CategoryName }))).ToArray()
             };
         }
 

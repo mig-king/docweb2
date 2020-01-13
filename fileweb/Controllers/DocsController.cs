@@ -1,52 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using EnsureThat;
+using fileweb.Models;
+using fileweb.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using System.Net;
-using EnsureThat;
-using fileweb.Models;
 
 namespace fileweb.Controllers
 {
-    [Route("/docs")]
+    [Route("/")]
     public class DocsController
         : Controller
     {
         private readonly IDocAccessor _docAccessor;
-        public DocsController(IDocAccessor docAccessor)
+        private readonly IAnnouncementService _announcementService;
+        public DocsController(IDocAccessor docAccessor, IAnnouncementService announcementService)
         {
             Ensure.That(docAccessor, nameof(docAccessor)).IsNotNull();
+            Ensure.That(announcementService, nameof(announcementService)).IsNotNull();
 
             this._docAccessor = docAccessor;
+            _announcementService = announcementService;
         }
 
-
-        [HttpGet("{category1?}")]
-        public async Task<IActionResult> Index(string category1)
+        public async Task<IActionResult> Index()
         {
-            var category1List = await this._docAccessor.GetAllCategory1().ConfigureAwait(false);
+            var categoryList = await this._docAccessor.GetAllCategories().ConfigureAwait(false);
 
-            if (!category1List.Any())
+            if (!categoryList.Any())
                 return StatusCode(500, "CONFIG ERROR");
 
-            if (string.IsNullOrEmpty(category1))
+            return View(new DocsHomeViewModel()
             {
-                category1 = category1List.OrderBy(c => c).FirstOrDefault();
+                CategoryList = categoryList,
+                Anncouncement = await _announcementService.GetLatestAnnouncement()
+            });
+        }
 
-                return Redirect($"~/docs/{category1}");
+        [HttpGet("/docs/{category2?}")]
+        public async Task<IActionResult> Category(string category2)
+        {
+            var categoryList = await this._docAccessor.GetAllCategories().ConfigureAwait(false);
+
+            if (!categoryList.Any())
+                return StatusCode(500, "CONFIG ERROR");
+
+            if (string.IsNullOrEmpty(category2))
+            {
+                category2 = categoryList.Select(c => c.Category2).OrderBy(c => c).FirstOrDefault();
+
+                return Redirect($"~/docs/{category2}");
             }
             else
             {
-                var docs = await this._docAccessor.GetDocDtos(category1).ConfigureAwait(false);
+                var docs = await this._docAccessor.GetDocDtos(category2).ConfigureAwait(false);
 
-                var model = docs.Any() ? docs.GetDocsModel().GetDocsViewModel(category1List) : null;
+                var model = docs.Any() ? docs.GetDocsModel().GetDocsViewModel(categoryList) : null;
 
-                return View(model);
+                return View("Category", model);
             }
         }
-
     }
 }

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DocsCategoryModel>
+
+@using Microsoft.Extensions.Options
+@inject IOptions<EnvOptions> EnvSettings
+
+<div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading"> <img class="img-fluid" width="200" src="~/images/HAH_LOGO.svg"></div>
+    <div class="list-group list-group-flush">
+        @if (Model.Any())
+        {
+            <a href="@Url.Content("~/")" class="list-group-item list-group-item-action bg-light">
+                <strong>Home</strong>
+            </a>
+            @foreach (var category in Model
+            .GroupBy(c => c.Category1)
+            .OrderBy(c => c.Key))
+            {
+                var category2s = Model
+                    .Where(c => c.Category1 == category.Key)
+                    .GroupBy(c => c.Category2)
+                    .OrderBy(c => c.Key);
+                if (category2s.Any())
+                {
+                    <a href="#" class="list-group-item list-group-item-action bg-light disabled">
+                        <strong>@category.Key</strong>
+                    </a>
+                    foreach (var category2 in category2s)
+                    {
+                        <a href="@Url.Content("~/docs/")@category2.Key" class="list-group-item list-group-item-action bg-light">
+                            <span class="ml-3">@category2.Key</span>
+                        </a>
+                    }
+                }
+                else
+                {
+                    <a href="@Url.Content("~/docs/")@category.Key" class="list-group-item list-group-item-action bg-light">
+                        <strong>@category.Key</strong>
+                    </a>
+                }
+            }
+        }
+    </div>
+</div>

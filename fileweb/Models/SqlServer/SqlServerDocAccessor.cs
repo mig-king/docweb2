@@ -1,12 +1,11 @@
-﻿using System;
+﻿using EnsureThat;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Data;
-using System.Data.Sql;
-using System.Data.SqlClient;
-using EnsureThat;
 
 namespace fileweb.Models.SqlServer
 {
@@ -27,7 +26,7 @@ namespace fileweb.Models.SqlServer
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<string>> GetAllCategory1(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<string>> GetAllCategory2(CancellationToken cancellationToken = default)
         {
             var result = new List<string>();
 
@@ -35,7 +34,7 @@ namespace fileweb.Models.SqlServer
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                var sql = @"SELECT Category1 FROM cms.files GROUP BY Category1";
+                var sql = @"SELECT Category2 FROM cms.files GROUP BY Category2";
 
                 using (var command = new SqlCommand(sql, connection))
                 {
@@ -57,13 +56,51 @@ namespace fileweb.Models.SqlServer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="category1"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<DocDto>> GetDocDtos(string category1, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<DocsCategoryModel>> GetAllCategories(CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(category1))
-                category1 = null;
+            var result = new List<DocsCategoryModel>();
+
+            using (var connection = new SqlConnection(this._connectionString))
+            {
+                await connection.OpenAsync().ConfigureAwait(false);
+
+                var sql = @"SELECT Category1,Category2,Category3,Url FROM cms.files";
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+
+                    using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                    {
+                        while (await reader.ReadAsync().ConfigureAwait(false))
+                        {
+                            result.Add(new DocsCategoryModel
+                            {
+                                Category1 = reader.GetString(0),
+                                Category2 = reader.GetString(1),
+                                Category3 = reader.GetString(2),
+                                Url = reader.GetString(3)
+                            });
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="category2"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<DocDto>> GetDocDtos(string category2, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(category2))
+                category2 = null;
 
             var result = new List<DocDto>();
 
@@ -71,12 +108,12 @@ namespace fileweb.Models.SqlServer
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                var sql = @"SELECT Id, Category1, Category2, Category3, Title, Description, Url, NewWindow, Visible, Icon FROM cms.files WHERE Category1 = ISNULL(@Category1, Category1)";
+                var sql = @"SELECT Id, Category1, Category2, Category3, Title, Description, Url, NewWindow, Visible, Icon FROM cms.files WHERE Category2 = ISNULL(@Category2, Category2)";
 
                 using (var command = new SqlCommand(sql, connection))
                 {
                     command.CommandType = CommandType.Text;
-                    command.Parameters.Add(new SqlParameter("@Category1", category1 == null ? DBNull.Value : (object)category1));
+                    command.Parameters.Add(new SqlParameter("@Category2", category2 == null ? DBNull.Value : (object)category2));
 
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {

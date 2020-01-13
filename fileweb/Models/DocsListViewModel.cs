@@ -24,7 +24,7 @@ namespace fileweb.Models
 
     public class DocsViewModel
     {
-        public IEnumerable<string> CategoryList { get; set; }
+        public IEnumerable<DocsCategoryModel> CategoryList { get; set; }
         public string Category { get; set; }
         public IEnumerable<DocsListRowModel> Rows { get; set; }
         public IEnumerable<DocsViewModel> SubCategoryList { get; set; }
@@ -43,5 +43,19 @@ namespace fileweb.Models
         public string Url { get; set; }
         public bool NewWindow { get; set; }
         public string Icon { get; set; }
+    }
+
+    public class DocsCategoryModel
+    {
+        public string Category1 { get; set; }
+        public string Category2 { get; set; }
+        public string Category3 { get; set; }
+        public string Url { get; set; }
+    }
+
+    public class DocsHomeViewModel
+    {
+        public IEnumerable<DocsCategoryModel> CategoryList { get; set; }
+        public Announcement Anncouncement { get; set; }
     }
 }
